@@ -31,7 +31,7 @@ namespace Orca
         virtual ~GLRenderer() override;
 
         // Implementation of the Renderer Interface
-        void Initialize(void* windowHandle) override;
+        void Initialize(void* windowHandle = nullptr) override;
         void Shutdown() override;
         void BeginFrame() override;
         void Render() override;
@@ -65,3 +65,4 @@ namespace Orca
 
 
 #endif
+
