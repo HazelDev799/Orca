@@ -1,6 +1,6 @@
 /*********************************************
 *
-* Copyright © 2025 VEGA Enterprises LTD,.
+* Copyright Â© 2025 VEGA Enterprises LTD,.
 * Licensed under the MIT License.
 *
 **********************************************/
@@ -16,6 +16,14 @@
 
 namespace Orca
 {
+	class CameraComponent;
+
+	struct RenderCommand
+	{
+		const Mesh* mesh;
+		Matrix4 transform;
+	};
+
 	class GLRenderer : public Renderer
 	{
     public:
@@ -31,17 +39,29 @@ namespace Orca
 
         void DrawMesh(const Mesh& mesh, const Shader& shader, const Matrix4& transform) override;
 
+		void SetActiveCamera(CameraComponent* camera) {activeCamera = camera;}
+		void DrawSkybox(const Shader& shader, unsigned int cubemapID);
+		bool CompileAndLinkShaders();
+
+        // Shader transpilation methods
+        TranspilationResult TranspileShader(const std::string& shaderPath, ShaderTarget target, ShaderStage stage);
+        TranspilationResult TranspileProgram(const std::string& vertPath, const std::string& fragPath, ShaderTarget target);
+
         // GL Specifics
         void SubmitMesh(const Mesh& mesh);
 
     private:
         bool isInitialized = false;
         unsigned int programID = 0;
-        std::vector<const Mesh*> meshesToRender;
-        void* windowHandle;
+        std::vector<RenderCommand> renderQuene;
+		CameraComponent* activeCamera = nullptr;
+		std::unique_ptr<ShaderTranspiler> m_transpiler
 
-        bool CompileAndLinkShaders();
+		std::string ReadShaderFiles(const std::string& path);
+		std::string GetShaderPath(const std::string& fileName);
+		void SaveInternalShaderCache(const std::string& fileName, const std::string& content);
 	};
 }
+
 
 #endif
